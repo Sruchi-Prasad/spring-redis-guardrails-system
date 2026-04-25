@@ -34,9 +34,9 @@ The system includes a Python-based stress test script to validate high-concurren
 - **Output**: Simulates 200 concurrent bot interactions, triggers virality capping, and ensures 100% data integrity under load.
 
 ## 🏗️ System Highlights
-- **Hybrid Storage**: PostgreSQL serves as the persistent source of truth for all durable entities (Posts, Comments, Analytics), while Redis acts as the real-time gatekeeper for high-concurrency guardrails.
+- **Hybrid Storage**: PostgreSQL serves as the persistent system of record for all durable entities (Posts, Comments, Analytics and Likes), while Redis acts as the real-time gatekeeper for high-concurrency guardrails.
 - **Concurrency**: Tested under 200+ concurrent requests per post without race conditions, leveraging Redis atomic primitives.
-- **Degraded Mode (Resilience)**: During Redis outages, the system utilizes a "Fail-Open" design. Guardrail checks are bypassed, and exceptions are trapped in the service layer to ensure the core business logic (PostgreSQL writes) remains available.
+- **Degraded Mode (Resilience)**: During Redis outages, the system utilizes a "Fail-Open" design. Requests **bypass guardrails instead of failing**, ensuring core business operations remain available while exceptions are gracefully trapped and logged.
 
 ## 🚀 API Contract
 - `POST /api/posts` -> Creates a new post. (Body: `authorId`, `content`)
