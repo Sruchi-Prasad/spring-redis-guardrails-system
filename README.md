@@ -19,9 +19,10 @@ A high-performance Spring Boot microservice designed for high-concurrency intera
 - **Smart Notifications**: Batched notification system that summarizes multiple interactions into single push alerts.
 
 ## 🧠 Redis Keys & Distributed State
-- `post:{id}:virality_score`: Tracks post virality (Likes: +20, Comments: +50).
+- `post:{id}:virality_score`: Weighted sum of interactions (Likes: +20, Comments: +50).
 - `post:{id}:bot_count`: Atomic counter for bot interactions with enforcement capping.
-- `bot:cooldown:{id}`: TTL-based lock for bot rate-limiting (10 min).
+- `post:{id}:likes_count`: Precise counter for human + bot likes for durable analytics.
+- `user:bot_cooldown:{id}`: TTL-based lock for bot rate-limiting (10 min).
 - `user:action:{uid}:{pid}:{type}`: Atomically managed idempotency window (15 min).
 - `user:{id}:notif_cooldown`: TTL gate for smart notification batching.
 - `user:{id}:pending_notifs`: Redis List used for asynchronous notification queuing.
@@ -33,8 +34,9 @@ The system includes a Python-based stress test script to validate high-concurren
 - **Output**: Simulates 200 concurrent bot interactions, triggers virality capping, and ensures 100% data integrity under load.
 
 ## 🏗️ System Highlights
-- **Hybrid Storage**: PostgreSQL serves as the persistent source of truth, while Redis acts as the real-time gatekeeper for high-concurrency guardrails.
+- **Hybrid Storage**: PostgreSQL serves as the persistent source of truth for all durable entities (Posts, Comments, Analytics), while Redis acts as the real-time gatekeeper for high-concurrency guardrails.
 - **Concurrency**: Tested under 200+ concurrent requests per post without race conditions, leveraging Redis atomic primitives.
+- **Degraded Mode (Resilience)**: During Redis outages, the system utilizes a "Fail-Open" design. Guardrail checks are bypassed, and exceptions are trapped in the service layer to ensure the core business logic (PostgreSQL writes) remains available.
 
 ## 🚀 API Contract
 - `POST /api/posts` -> Creates a new post. (Body: `authorId`, `content`)

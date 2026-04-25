@@ -50,15 +50,18 @@ public class NotificationSweeper {
                 Long postId = Long.parseLong(key.split(":")[1]);
                 Long score = redisGuard.getValue(key);
                 Long botCount = redisGuard.getValue("post:" + postId + ":bot_count");
+                Long totalLikes = redisGuard.getValue("post:" + postId + ":likes_count");
 
                 PostAnalytics analytics = new PostAnalytics();
                 analytics.setPostId(postId);
                 analytics.setViralityScore(score);
                 analytics.setBotInteractions(botCount);
+                analytics.setTotalLikes(totalLikes);
                 analytics.setSnapshotTime(LocalDateTime.now());
 
                 analyticsRepo.save(analytics);
-                log.info("Aggregated analytics for post {}: ViralityScore={}, BotCount={}", postId, score, botCount);
+                log.info("Aggregated analytics for post {}: ViralityScore={}, Likes={}, BotCount={}",
+                        postId, score, totalLikes, botCount);
             }
         }
     }

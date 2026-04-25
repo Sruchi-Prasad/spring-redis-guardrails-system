@@ -40,7 +40,7 @@ public class CommentService {
 
         // 3. Horizontal Guardrail (Bot Cooldown/Limit)
         if (isBot) {
-            String botCooldownKey = "bot:cooldown:" + userId;
+            String botCooldownKey = "user:bot_cooldown:" + userId;
             if (redisGuard.exists(botCooldownKey)) {
                 log.warn("ACTION_BLOCKED: Bot {} on cooldown", userId);
                 throw new RateLimitExceededException("Bot interaction restricted due to cooldown");

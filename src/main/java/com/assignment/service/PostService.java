@@ -40,6 +40,7 @@ public class PostService {
     public void updateVirality(Long postId, String type, boolean isBot) {
         String scoreKey = "post:" + postId + ":virality_score";
         String botCountKey = "post:" + postId + ":bot_count";
+        String likesKey = "post:" + postId + ":likes_count";
 
         try {
             if (isBot) {
@@ -53,6 +54,9 @@ public class PostService {
             } else {
                 long increment = type.equals("LIKE") ? 20 : 50;
                 redisGuard.increment(scoreKey, increment);
+                if (type.equals("LIKE")) {
+                    redisGuard.increment(likesKey, 1);
+                }
             }
         } catch (Exception e) {
             log.error("DEGRADED_MODE_ACTIVATED: Redis failure for post: {}", postId);
