@@ -20,13 +20,19 @@ public class CommentService {
     private final PostService postService;
     private final NotificationService notificationService;
 
+    /**
+     * Fully guardrailed comment submission:
+     * - Idempotency Lock
+     * - Depth Level Safety (Max 20)
+     * - Bot Cooldown Enforcement
+     */
     public Comment addComment(Long postId, Comment comment, Long userId, boolean isBot) {
         // 1. Idempotency Check
         if (!redisGuard.isIdempotent(userId, postId, "COMMENT")) {
             throw new IllegalStateException("Duplicate comment detected");
         }
 
-        // 2. Vertical Guardrail (Max Depth)
+        // 2. Vertical Guardrail (Max Depth) - Prevents recursive comment chains
         if (comment.getDepthLevel() != null && comment.getDepthLevel() > 20) {
             log.warn("ACTION_BLOCKED: Max depth exceeded for post {}", postId);
             throw new IllegalStateException("Comment depth limit exceeded");
@@ -42,7 +48,7 @@ public class CommentService {
             // Set 10 min cooldown for this bot
             redisGuard.setWithTTL(botCooldownKey, "1", 10);
 
-            // Trigger notification
+            // Trigger notification with 15-min batching logic
             notificationService.handleBotNotification(userId, "New bot interaction on post " + postId);
         }
 

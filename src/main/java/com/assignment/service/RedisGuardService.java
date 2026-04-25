@@ -60,6 +60,7 @@ public class RedisGuardService {
 
     /**
      * Checks if an action is idempotent within a 15-minute window.
+     * Prevents redundant state updates and duplicate interactions.
      */
     public boolean isIdempotent(Long userId, Long postId, String actionType) {
         String key = String.format("user:action:%d:%d:%s", userId, postId, actionType);

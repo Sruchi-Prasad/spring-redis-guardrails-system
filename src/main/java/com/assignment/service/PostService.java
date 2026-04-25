@@ -31,6 +31,12 @@ public class PostService {
         return postRepo.findById(id);
     }
 
+    /**
+     * Updates post virality based on interaction type and actor status.
+     * Likes increase score by 20, Comments by 50.
+     * Bot interactions are capped at 100 per post to prevent artificial
+     * manipulation.
+     */
     public void updateVirality(Long postId, String type, boolean isBot) {
         String scoreKey = "post:" + postId + ":virality_score";
         String botCountKey = "post:" + postId + ":bot_count";

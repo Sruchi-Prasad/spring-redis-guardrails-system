@@ -26,6 +26,12 @@ A high-performance Spring Boot microservice designed for high-concurrency intera
 - `user:{id}:notif_cooldown`: TTL gate for smart notification batching.
 - `user:{id}:pending_notifs`: Redis List used for asynchronous notification queuing.
 
+## 🧪 Stress Testing
+The system includes a Python-based stress test script to validate high-concurrency performance and guardrail enforcement.
+- **Requirement**: `pip install requests`
+- **Run**: `python stress_test.py`
+- **Output**: Simulates 200 concurrent bot interactions, triggers virality capping, and ensures 100% data integrity under load.
+
 ## 🏗️ System Highlights
 - **Hybrid Storage**: PostgreSQL serves as the persistent source of truth, while Redis acts as the real-time gatekeeper for high-concurrency guardrails.
 - **Concurrency**: Tested under 200+ concurrent requests per post without race conditions, leveraging Redis atomic primitives.
