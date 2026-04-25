@@ -25,7 +25,7 @@ def send_bot_comment(user_id):
         print(f"User {user_id}: Error {str(e)}")
 
 def run_stress_test():
-    print(f"🚀 Starting stress test: {NUM_REQUESTS} concurrent bot comments on Post {POST_ID}...")
+    print(f"Starting stress test: {NUM_REQUESTS} concurrent bot comments on Post {POST_ID}...")
     threads = []
     
     start_time = time.time()
@@ -40,7 +40,7 @@ def run_stress_test():
         t.join()
     
     end_time = time.time()
-    print(f"\n✅ Stress test complete in {end_time - start_time:.2f} seconds.")
+    print(f"\nStress test complete in {end_time - start_time:.2f} seconds.")
     print("Check server logs for bot virality capping and cooldown enforcement.")
 
 if __name__ == "__main__":
